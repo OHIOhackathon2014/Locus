@@ -10,22 +10,38 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
+import com.android.datetimepicker.date.DatePickerDialog;
+import com.android.datetimepicker.date.DatePickerDialog.OnDateSetListener;
+import com.android.datetimepicker.time.RadialPickerLayout;
+import com.android.datetimepicker.time.TimePickerDialog;
+import com.android.datetimepicker.time.TimePickerDialog.OnTimeSetListener;
 import com.centauri.locus.provider.Locus;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * @author mohitd2000
  * 
  */
-public class TaskEditFragment extends Fragment {
+public class TaskEditFragment extends Fragment implements OnClickListener, OnDateSetListener,
+        OnTimeSetListener {
     private static final String TAG = TaskEditFragment.class.getSimpleName();
     private static final String[] PROJECTION = { Locus.Task._ID, Locus.Task.COLUMN_TITLE,
         Locus.Task.COLUMN_DESCRIPTION };
 
     private long taskId;
     private Cursor taskCursor;
+    private TextView dateTextView;
+    private TextView timeTextView;
 
     /**
      * @see android.app.Fragment#onCreate(android.os.Bundle)
@@ -39,6 +55,7 @@ public class TaskEditFragment extends Fragment {
             taskCursor = getActivity().getContentResolver().query(taskUri, PROJECTION, null, null,
                     null);
         }
+
     }
 
     /**
@@ -48,15 +65,24 @@ public class TaskEditFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_task_edit, container, false);
+
+        dateTextView = (TextView) view.findViewById(R.id.dateTextView);
+        timeTextView = (TextView) view.findViewById(R.id.timeTextView);
+
+        dateTextView.setOnClickListener(this);
+        timeTextView.setOnClickListener(this);
+
+        ((ImageButton) view.findViewById(R.id.clearButton)).setOnClickListener(this);
+
         return view;
     }
 
     /**
-     * @see android.app.Fragment#onStart()
+     * @see android.app.Fragment#onActivityCreated(android.os.Bundle)
      */
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         if (taskCursor.getCount() > 0) {
             taskCursor.moveToFirst();
             String taskTitle = taskCursor.getString(taskCursor
@@ -69,5 +95,56 @@ public class TaskEditFragment extends Fragment {
             titleEditText.setText(taskTitle);
             descEditText.setText(taskDescription);
         }
+    }
+
+    /**
+     * @see android.view.View.OnClickListener#onClick(android.view.View)
+     */
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+        case R.id.dateTextView:
+            DatePickerDialog dateDialog = new DatePickerDialog();
+            dateDialog.setOnDateSetListener(this);
+            dateDialog.show(getFragmentManager(), "date");
+            break;
+        case R.id.timeTextView:
+            TimePickerDialog timeDialog = new TimePickerDialog();
+            timeDialog.setOnTimeSetListener(this);
+            timeDialog.show(getFragmentManager(), "time");
+            break;
+        case R.id.clearButton:
+            dateTextView.setText("Set date");
+            timeTextView.setText("Off");
+            break;
+        }
+    }
+
+    /**
+     * @see com.android.datetimepicker.time.TimePickerDialog.OnTimeSetListener#onTimeSet(com.android.datetimepicker.time.RadialPickerLayout,
+     *      int, int)
+     */
+    @Override
+    public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute) {
+        String AMPM = hourOfDay <= 12 ? "AM" : "PM";
+        int hour = hourOfDay <= 12 ? hourOfDay : hourOfDay - 12;
+
+        timeTextView.setText(hour + ":" + String.format("%02d", minute) + " " + AMPM);
+    }
+
+    /**
+     * @see com.android.datetimepicker.date.DatePickerDialog.OnDateSetListener#onDateSet(com.android.datetimepicker.date.DatePickerDialog,
+     *      int, int, int)
+     */
+    @Override
+    public void onDateSet(DatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
+        TimeZone tz = TimeZone.getDefault();
+        Calendar cal = new GregorianCalendar(tz);
+        cal.set(year, monthOfYear, dayOfMonth);
+
+        String day = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault());
+        String month = cal.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault());
+
+        dateTextView.setText(day + ", " + month + " " + dayOfMonth + ", " + year);
     }
 }
