@@ -39,8 +39,8 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
     private static final String[] PROJECTION = { Locus.Task._ID, Locus.Task.COLUMN_TITLE,
         Locus.Task.COLUMN_DESCRIPTION };
 
-    private long taskId;
     private Cursor taskCursor;
+    private Uri taskUri;
 
     private EditText titleEditText;
     private EditText descEditText;
@@ -54,8 +54,8 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            this.taskId = getArguments().getLong(MainActivity.KEY_TASK_ID);
-            Uri taskUri = ContentUris.withAppendedId(Locus.Task.CONTENT_URI, taskId);
+            long taskId = getArguments().getLong(MainActivity.KEY_TASK_ID);
+            taskUri = ContentUris.withAppendedId(Locus.Task.CONTENT_URI, taskId);
             taskCursor = getActivity().getContentResolver().query(taskUri, PROJECTION, null, null,
                     null);
         }
@@ -164,13 +164,13 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
     }
 
     private void saveData() {
-        Uri uri = ContentUris.withAppendedId(Locus.Task.CONTENT_URI, taskId);
         String title = titleEditText.getText().toString();
         String desc = descEditText.getText().toString();
+
         ContentValues values = new ContentValues();
         values.put(Locus.Task.COLUMN_TITLE, title);
         values.put(Locus.Task.COLUMN_DESCRIPTION, desc);
 
-        getActivity().getContentResolver().update(uri, values, null, null);
+        getActivity().getContentResolver().update(taskUri, values, null, null);
     }
 }

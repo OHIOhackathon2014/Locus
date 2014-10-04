@@ -39,7 +39,6 @@ public class TaskListFragment extends ListFragment {
                 PROJECTION, null, null, null);
         adapter = new TaskAdapter(getActivity(), cursor, 0);
         setListAdapter(adapter);
-        setRetainInstance(true);
     }
 
     /**

@@ -25,7 +25,6 @@ import com.centauri.locus.util.StaticMapsLoader;
  */
 public class TaskAdapter extends CursorAdapter {
 
-    private boolean hasDescription = true;
     private BitmapCache cache;
 
     /**
@@ -45,17 +44,8 @@ public class TaskAdapter extends CursorAdapter {
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view;
+        View view = inflater.inflate(R.layout.list_item_task_no_description, parent, false);
 
-        String description = cursor.getString(cursor.getColumnIndex(Locus.Task.COLUMN_DESCRIPTION));
-
-        if (description == null || description.trim().isEmpty()) {
-            view = inflater.inflate(R.layout.list_item_task_no_description, parent, false);
-            hasDescription = false;
-        } else {
-            view = inflater.inflate(R.layout.list_item_task, parent, false);
-            hasDescription = true;
-        }
         return view;
     }
 
@@ -70,14 +60,10 @@ public class TaskAdapter extends CursorAdapter {
         double lat = cursor.getDouble(cursor.getColumnIndex(Locus.Task.COLUMN_LATITUDE));
         double lon = cursor.getDouble(cursor.getColumnIndex(Locus.Task.COLUMN_LONGITUDE));
 
-        if (hasDescription) {
-            String description = cursor.getString(cursor
-                    .getColumnIndex(Locus.Task.COLUMN_DESCRIPTION));
-            TextView descTextView = (TextView) view.findViewById(R.id.description_textview);
-            descTextView.setText(description);
-        }
-
+        TextView titleTextView = (TextView) view.findViewById(R.id.title_textview);
         ImageView mapImageView = (ImageView) view.findViewById(R.id.location_imageview);
+
+        titleTextView.setText(title);
 
         String key = 't' + 's' + String.valueOf(id);
         Bitmap image = cache.getBitmapFromCache(key);
@@ -88,9 +74,6 @@ public class TaskAdapter extends CursorAdapter {
                     StaticMapsLoader.SIZE_SMALL, StaticMapsLoader.TABLE_TASK);
             task.execute(new GeoPoint(lat, lon));
         }
-
-        TextView titleTextView = (TextView) view.findViewById(R.id.title_textview);
-        titleTextView.setText(title);
 
     }
 }

@@ -121,6 +121,8 @@ public class MainActivity extends Activity implements
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_add) {
+            startActivity(new Intent(this, TaskEditActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
