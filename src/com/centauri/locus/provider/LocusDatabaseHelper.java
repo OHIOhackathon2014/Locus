@@ -38,7 +38,7 @@ public class LocusDatabaseHelper extends SQLiteOpenHelper {
                 + " INTEGER PRIMARY KEY AUTOINCREMENT," + Locus.Task.COLUMN_TITLE
                 + " TEXT NOT NULL," + Locus.Task.COLUMN_DESCRIPTION + " TEXT,"
                 + Locus.Task.COLUMN_LATITUDE + " REAL," + Locus.Task.COLUMN_LONGITUDE + " REAL,"
-                + Locus.Task.COLUMN_RADIUS + " INTEGER," + Locus.Task.COLUMN_DUE + " TEXT,"
+                + Locus.Task.COLUMN_RADIUS + " INTEGER," + Locus.Task.COLUMN_DUE + " REAL,"
                 + Locus.Task.COLUMN_COMPLETED + " INTEGER" + ");");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS " + Place.TABLE_NAME + "(" + Locus.Place._ID

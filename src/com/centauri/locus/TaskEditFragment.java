@@ -3,11 +3,6 @@
  */
 package com.centauri.locus;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.TimeZone;
-
 import android.app.Fragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -29,6 +24,11 @@ import com.android.datetimepicker.time.TimePickerDialog;
 import com.android.datetimepicker.time.TimePickerDialog.OnTimeSetListener;
 import com.centauri.locus.provider.Locus;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
+
 /**
  * @author mohitd2000
  * 
@@ -37,7 +37,7 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
         OnTimeSetListener {
     private static final String TAG = TaskEditFragment.class.getSimpleName();
     private static final String[] PROJECTION = { Locus.Task._ID, Locus.Task.COLUMN_TITLE,
-        Locus.Task.COLUMN_DESCRIPTION };
+        Locus.Task.COLUMN_DESCRIPTION, Locus.Task.COLUMN_DUE };
 
     private Cursor taskCursor;
     private Uri taskUri;
@@ -46,6 +46,8 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
     private EditText descEditText;
     private TextView dateTextView;
     private TextView timeTextView;
+
+    private int hour = 0, minute = 0, year = 0, month = 0, day = 0;
 
     /**
      * @see android.app.Fragment#onCreate(android.os.Bundle)
@@ -95,9 +97,29 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
                     .getColumnIndexOrThrow(Locus.Task.COLUMN_TITLE));
             String taskDescription = taskCursor.getString(taskCursor
                     .getColumnIndexOrThrow(Locus.Task.COLUMN_DESCRIPTION));
+            long due = taskCursor.getLong(taskCursor.getColumnIndexOrThrow(Locus.Task.COLUMN_DUE));
             taskCursor.close();
+
             EditText titleEditText = (EditText) getActivity().findViewById(R.id.titleEditText);
             EditText descEditText = (EditText) getActivity().findViewById(R.id.descriptionEditText);
+
+            TimeZone tz = TimeZone.getDefault();
+            Calendar cal = new GregorianCalendar(tz);
+            cal.setTimeInMillis(due);
+
+            hour = cal.get(Calendar.HOUR_OF_DAY);
+            day = cal.get(Calendar.DATE);
+            year = cal.get(Calendar.YEAR);
+
+            String AMPM = hour <= 12 ? "AM" : "PM";
+            int hourTime = hour <= 12 ? hour : hour - 12;
+            String dayName = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT,
+                    Locale.getDefault());
+            String month = cal.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault());
+
+            timeTextView.setText(hourTime + ":" + String.format("%02d", minute) + " " + AMPM);
+            dateTextView.setText(dayName + ", " + month + " " + day + ", " + year);
+
             titleEditText.setText(taskTitle);
             descEditText.setText(taskDescription);
         }
@@ -108,39 +130,29 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
      */
     @Override
     public void onClick(View view) {
-        /*switch (view.getId()) {
-        case R.id.dateTextView:
+        /*
+         * switch (view.getId()) { case R.id.dateTextView: DatePickerDialog
+         * dateDialog = new DatePickerDialog();
+         * dateDialog.setOnDateSetListener(this);
+         * dateDialog.show(getFragmentManager(), "date"); break; case
+         * R.id.timeTextView: TimePickerDialog timeDialog = new
+         * TimePickerDialog(); timeDialog.setOnTimeSetListener(this);
+         * timeDialog.show(getFragmentManager(), "time"); break; case
+         * R.id.clearButton: dateTextView.setText("Set date");
+         * timeTextView.setText("Off"); break; }
+         */
+        if (view.getId() == R.id.dateTextView) {
             DatePickerDialog dateDialog = new DatePickerDialog();
-            dateDialog.setOnDateSetListener(this);
+            dateDialog.initialize(this, year, month, day);
             dateDialog.show(getFragmentManager(), "date");
-            break;
-        case R.id.timeTextView:
+        } else if (view.getId() == R.id.timeTextView) {
             TimePickerDialog timeDialog = new TimePickerDialog();
-            timeDialog.setOnTimeSetListener(this);
+            timeDialog.initialize(this, hour, minute, false);
             timeDialog.show(getFragmentManager(), "time");
-            break;
-        case R.id.clearButton:
+        } else {
             dateTextView.setText("Set date");
             timeTextView.setText("Off");
-            break;
-        }*/
-    	if(view.getId() == R.id.dateTextView)
-    	{
-    		DatePickerDialog dateDialog = new DatePickerDialog();
-    		dateDialog.setOnDateSetListener(this);
-    		dateDialog.show(getFragmentManager(), "date");
-    	}
-    	else if(view.getId() == R.id.timeTextView)
-    	{
-    		TimePickerDialog timeDialog = new TimePickerDialog();
-            timeDialog.setOnTimeSetListener(this);
-            timeDialog.show(getFragmentManager(), "time");
-    	}
-    	else
-    	{
-    		dateTextView.setText("Set date");
-            timeTextView.setText("Off");
-    	}
+        }
     }
 
     /**
@@ -158,6 +170,9 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
      */
     @Override
     public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute) {
+        this.hour = hourOfDay;
+        this.minute = minute;
+
         String AMPM = hourOfDay <= 12 ? "AM" : "PM";
         int hour = hourOfDay <= 12 ? hourOfDay : hourOfDay - 12;
 
@@ -170,6 +185,10 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
      */
     @Override
     public void onDateSet(DatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
+        this.year = year;
+        this.month = monthOfYear;
+        this.day = dayOfMonth;
+
         TimeZone tz = TimeZone.getDefault();
         Calendar cal = new GregorianCalendar(tz);
         cal.set(year, monthOfYear, dayOfMonth);
@@ -184,9 +203,14 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
         String title = titleEditText.getText().toString();
         String desc = descEditText.getText().toString();
 
+        TimeZone tz = TimeZone.getDefault();
+        Calendar cal = new GregorianCalendar(tz);
+        cal.set(year, month, day, hour, minute);
+
         ContentValues values = new ContentValues();
         values.put(Locus.Task.COLUMN_TITLE, title);
         values.put(Locus.Task.COLUMN_DESCRIPTION, desc);
+        values.put(Locus.Task.COLUMN_DUE, cal.getTimeInMillis());
 
         getActivity().getContentResolver().update(taskUri, values, null, null);
     }
