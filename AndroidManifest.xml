@@ -35,6 +35,9 @@
 
         <activity
             android:name="com.centauri.locus.GeofenceSelectorActivity" />
+        <activity 
+            android:name="com.centauri.locus.TaskEditActivity"></activity>
+        
         <provider android:name=".provider.LocusProvider" 
             android:authorities="com.centauri.locus.provider.LocusProvider"
             android:exported="false" />

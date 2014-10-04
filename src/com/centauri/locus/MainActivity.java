@@ -8,9 +8,12 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
 
 public class MainActivity extends Activity implements
-        NavigationDrawerFragment.NavigationDrawerCallbacks {
+        NavigationDrawerFragment.NavigationDrawerCallbacks,
+        TaskListFragment.OnListItemClickedCallback {
 
     public static final String KEY_TASK_ID = "task_id";
 
@@ -120,6 +123,17 @@ public class MainActivity extends Activity implements
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * @see com.centauri.locus.TaskListFragment.OnListItemClickedCallback#onListItemClicked(android.widget.ListView,
+     *      android.view.View, int, long)
+     */
+    @Override
+    public void onListItemClicked(ListView listView, View view, int position, long id) {
+        Intent intent = new Intent(this, TaskEditActivity.class);
+        intent.putExtra(KEY_TASK_ID, id);
+        startActivity(intent);
     }
 
 }
