@@ -13,5 +13,6 @@
     <string name="title_hint">Title</string>
     <string name="description_hint">Description</string>
     <string name="add">Add</string>
+    <string name="delete">Delete</string>
 
 </resources>
