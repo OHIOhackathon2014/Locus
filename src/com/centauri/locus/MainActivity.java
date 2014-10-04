@@ -53,8 +53,11 @@ public class MainActivity extends Activity implements
             startActivity(new Intent(this, GeofenceSelectorActivity.class));
             break;
         case 2:
-            fragmentManager.beginTransaction().replace(R.id.container, new TaskEditFragment())
-                    .commit();
+            TaskEditFragment editTaskFragment = new TaskEditFragment();
+            Bundle args = new Bundle();
+            args.putLong(KEY_TASK_ID, 1);
+            editTaskFragment.setArguments(args);
+            fragmentManager.beginTransaction().replace(R.id.container, editTaskFragment).commit();
             break;
         case 3:
             fragmentManager.beginTransaction().replace(R.id.container, new TaskMapFragment())

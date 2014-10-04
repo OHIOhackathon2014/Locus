@@ -20,6 +20,7 @@ import com.centauri.locus.provider.Locus;
  * 
  */
 public class TaskEditFragment extends Fragment {
+    private static final String TAG = TaskEditFragment.class.getSimpleName();
     private static final String[] PROJECTION = { Locus.Task._ID, Locus.Task.COLUMN_TITLE,
         Locus.Task.COLUMN_DESCRIPTION };
 
@@ -34,12 +35,10 @@ public class TaskEditFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.taskId = getArguments().getLong(MainActivity.KEY_TASK_ID);
+            Uri taskUri = ContentUris.withAppendedId(Locus.Task.CONTENT_URI, taskId);
+            taskCursor = getActivity().getContentResolver().query(taskUri, PROJECTION, null, null,
+                    null);
         }
-
-        Uri taskUri = ContentUris.withAppendedId(Locus.Task.CONTENT_URI, taskId);
-        taskCursor = getActivity().getContentResolver()
-                .query(taskUri, PROJECTION, null, null, null);
-
     }
 
     /**
@@ -58,15 +57,17 @@ public class TaskEditFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        String taskTitle = taskCursor.getString(taskCursor
-                .getColumnIndexOrThrow(Locus.Task.COLUMN_TITLE));
-        String taskDescription = taskCursor.getString(taskCursor
-                .getColumnIndexOrThrow(Locus.Task.COLUMN_TITLE));
-
-        EditText titleEditText = (EditText) getActivity().findViewById(R.id.titleEditText);
-        EditText descEditText = (EditText) getActivity().findViewById(R.id.descriptionEditText);
-
-        titleEditText.setText(taskTitle);
-        descEditText.setText(taskDescription);
+        if (taskCursor.getCount() > 0) {
+            taskCursor.moveToFirst();
+            String taskTitle = taskCursor.getString(taskCursor
+                    .getColumnIndexOrThrow(Locus.Task.COLUMN_TITLE));
+            String taskDescription = taskCursor.getString(taskCursor
+                    .getColumnIndexOrThrow(Locus.Task.COLUMN_DESCRIPTION));
+            taskCursor.close();
+            EditText titleEditText = (EditText) getActivity().findViewById(R.id.titleEditText);
+            EditText descEditText = (EditText) getActivity().findViewById(R.id.descriptionEditText);
+            titleEditText.setText(taskTitle);
+            descEditText.setText(taskDescription);
+        }
     }
 }
