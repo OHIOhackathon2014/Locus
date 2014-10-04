@@ -3,6 +3,11 @@
  */
 package com.centauri.locus;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
+
 import android.app.Fragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -23,11 +28,6 @@ import com.android.datetimepicker.time.RadialPickerLayout;
 import com.android.datetimepicker.time.TimePickerDialog;
 import com.android.datetimepicker.time.TimePickerDialog.OnTimeSetListener;
 import com.centauri.locus.provider.Locus;
-
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * @author mohitd2000
@@ -108,7 +108,7 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
      */
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
+        /*switch (view.getId()) {
         case R.id.dateTextView:
             DatePickerDialog dateDialog = new DatePickerDialog();
             dateDialog.setOnDateSetListener(this);
@@ -123,7 +123,24 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
             dateTextView.setText("Set date");
             timeTextView.setText("Off");
             break;
-        }
+        }*/
+    	if(view.getId() == R.id.dateTextView)
+    	{
+    		DatePickerDialog dateDialog = new DatePickerDialog();
+    		dateDialog.setOnDateSetListener(this);
+    		dateDialog.show(getFragmentManager(), "date");
+    	}
+    	else if(view.getId() == R.id.timeTextView)
+    	{
+    		TimePickerDialog timeDialog = new TimePickerDialog();
+            timeDialog.setOnTimeSetListener(this);
+            timeDialog.show(getFragmentManager(), "time");
+    	}
+    	else
+    	{
+    		dateTextView.setText("Set date");
+            timeTextView.setText("Off");
+    	}
     }
 
     /**
