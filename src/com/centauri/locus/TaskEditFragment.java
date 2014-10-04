@@ -5,6 +5,7 @@ package com.centauri.locus;
 
 import android.app.Fragment;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,6 +41,9 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
 
     private long taskId;
     private Cursor taskCursor;
+
+    private EditText titleEditText;
+    private EditText descEditText;
     private TextView dateTextView;
     private TextView timeTextView;
 
@@ -68,6 +72,8 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
 
         dateTextView = (TextView) view.findViewById(R.id.dateTextView);
         timeTextView = (TextView) view.findViewById(R.id.timeTextView);
+        titleEditText = (EditText) view.findViewById(R.id.titleEditText);
+        descEditText = (EditText) view.findViewById(R.id.descriptionEditText);
 
         dateTextView.setOnClickListener(this);
         timeTextView.setOnClickListener(this);
@@ -121,6 +127,15 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
     }
 
     /**
+     * @see android.app.Fragment#onPause()
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+        saveData();
+    }
+
+    /**
      * @see com.android.datetimepicker.time.TimePickerDialog.OnTimeSetListener#onTimeSet(com.android.datetimepicker.time.RadialPickerLayout,
      *      int, int)
      */
@@ -146,5 +161,16 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
         String month = cal.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault());
 
         dateTextView.setText(day + ", " + month + " " + dayOfMonth + ", " + year);
+    }
+
+    private void saveData() {
+        Uri uri = ContentUris.withAppendedId(Locus.Task.CONTENT_URI, taskId);
+        String title = titleEditText.getText().toString();
+        String desc = descEditText.getText().toString();
+        ContentValues values = new ContentValues();
+        values.put(Locus.Task.COLUMN_TITLE, title);
+        values.put(Locus.Task.COLUMN_DESCRIPTION, desc);
+
+        getActivity().getContentResolver().update(uri, values, null, null);
     }
 }

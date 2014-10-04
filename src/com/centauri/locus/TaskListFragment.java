@@ -27,6 +27,7 @@ public class TaskListFragment extends ListFragment {
     }
 
     private OnListItemClickedCallback callbacks;
+    private TaskAdapter adapter;
 
     /**
      * @see android.app.Fragment#onCreate(android.os.Bundle)
@@ -36,9 +37,20 @@ public class TaskListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
         Cursor cursor = getActivity().getContentResolver().query(Locus.Task.CONTENT_URI,
                 PROJECTION, null, null, null);
-        TaskAdapter adapter = new TaskAdapter(getActivity(), cursor, 0);
+        adapter = new TaskAdapter(getActivity(), cursor, 0);
         setListAdapter(adapter);
         setRetainInstance(true);
+    }
+
+    /**
+     * @see android.app.Fragment#onStart()
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        Cursor cursor = getActivity().getContentResolver().query(Locus.Task.CONTENT_URI,
+                PROJECTION, null, null, null);
+        adapter.changeCursor(cursor);
     }
 
     /**
