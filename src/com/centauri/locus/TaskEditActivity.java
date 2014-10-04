@@ -9,6 +9,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
 import com.centauri.locus.provider.Locus;
@@ -57,7 +58,7 @@ public class TaskEditActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case android.R.id.home:
-            onBackPressed();
+            NavUtils.navigateUpFromSameTask(this);
             break;
 
         }

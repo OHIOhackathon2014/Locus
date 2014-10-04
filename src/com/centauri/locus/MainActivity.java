@@ -122,7 +122,7 @@ public class MainActivity extends Activity implements
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_add) {
-            startActivity(new Intent(this, TaskEditActivity.class));
+            startActivity(new Intent(this, GeofenceSelectorActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
