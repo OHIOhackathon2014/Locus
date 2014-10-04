@@ -59,6 +59,11 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDrJ4QdWGOk2GesNURqx0goxwuRTkrpTZo" />
+
+        <service
+            android:name="com.centauri.locus.geofence.ReceiveTransitionsIntentService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
