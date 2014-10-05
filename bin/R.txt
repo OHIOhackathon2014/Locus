@@ -164,9 +164,10 @@ int drawable ic_plusone_medium_off_client 0x7f020026
 int drawable ic_plusone_small_off_client 0x7f020027
 int drawable ic_plusone_standard_off_client 0x7f020028
 int drawable ic_plusone_tall_off_client 0x7f020029
-int drawable placeholder 0x7f02002a
-int drawable powered_by_google_dark 0x7f02002b
-int drawable powered_by_google_light 0x7f02002c
+int drawable listitem_background 0x7f02002a
+int drawable placeholder 0x7f02002b
+int drawable powered_by_google_dark 0x7f02002c
+int drawable powered_by_google_light 0x7f02002d
 int id action_add 0x7f080039
 int id action_settings 0x7f080037
 int id ampm_hitspace 0x7f08002f

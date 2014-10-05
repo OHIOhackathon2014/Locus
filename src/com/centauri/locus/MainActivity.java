@@ -132,7 +132,7 @@ public class MainActivity extends Activity implements
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.main, menu);
+            getMenuInflater().inflate(R.menu.global, menu);
             restoreActionBar();
             return true;
         }
@@ -147,8 +147,6 @@ public class MainActivity extends Activity implements
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
-        } else if (id == R.id.action_add) {
-            startActivity(new Intent(this, GeofenceSelectorActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }

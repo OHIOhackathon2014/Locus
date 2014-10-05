@@ -6,6 +6,7 @@ package com.centauri.locus;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.content.ContentUris;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -55,6 +56,28 @@ public class TaskListFragment extends ListFragment implements MultiChoiceModeLis
                 PROJECTION, null, null, null);
         adapter = new TaskAdapter(getActivity(), cursor, 0);
         setListAdapter(adapter);
+        setHasOptionsMenu(true);
+    }
+
+    /**
+     * @see android.app.Fragment#onCreateOptionsMenu(android.view.Menu,
+     *      android.view.MenuInflater)
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.main, menu);
+    }
+
+    /**
+     * @see android.app.Fragment#onOptionsItemSelected(android.view.MenuItem)
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_add) {
+            startActivity(new Intent(getActivity(), GeofenceSelectorActivity.class));
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -66,6 +89,7 @@ public class TaskListFragment extends ListFragment implements MultiChoiceModeLis
         getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         getListView().setMultiChoiceModeListener(this);
         getListView().setOnItemLongClickListener(this);
+        getListView().setBackground(getResources().getDrawable(R.drawable.listitem_background));
     }
 
     /**
