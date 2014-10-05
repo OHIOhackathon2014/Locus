@@ -1,12 +1,11 @@
 package com.centauri.locus.geofence;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -118,39 +117,75 @@ public class ReceiveTransitionsIntentService extends IntentService {
      */
     private void sendNotification(String transitionType, String ids) {
 
-        // Create an explicit content Intent that starts the main Activity
-        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+        // // Create an explicit content Intent that starts the main Activity
+        // Intent notificationIntent = new Intent(getApplicationContext(),
+        // MainActivity.class);
+        //
+        // // Construct a task stack
+        // TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        //
+        // // Adds the main Activity to the task stack as the parent
+        // stackBuilder.addParentStack(MainActivity.class);
+        //
+        // // Push the content Intent onto the stack
+        // stackBuilder.addNextIntent(notificationIntent);
+        //
+        // // Get a PendingIntent containing the entire back stack
+        // PendingIntent notificationPendingIntent =
+        // stackBuilder.getPendingIntent(0,
+        // PendingIntent.FLAG_UPDATE_CURRENT);
+        //
+        // // Get a notification builder that's compatible with platform
+        // versions
+        // // >= 4
+        // NotificationCompat.Builder builder = new
+        // NotificationCompat.Builder(this);
+        //
+        // // Set the notification contents
+        // builder.setSmallIcon(R.drawable.ic_notification)
+        // .setContentTitle(
+        // getString(R.string.geofence_transition_notification_title,
+        // transitionType,
+        // ids))
+        // .setContentText(getString(R.string.geofence_transition_notification_text))
+        // .setContentIntent(notificationPendingIntent);
+        //
+        // // Get an instance of the Notification manager
+        // NotificationManager mNotificationManager = (NotificationManager)
+        // getSystemService(Context.NOTIFICATION_SERVICE);
+        //
+        // // Issue the notification
+        // mNotificationManager.notify(0, builder.build());
 
-        // Construct a task stack
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        String[] stringIds = ids.split(",");
+        long id = Long.parseLong(stringIds[0]);
 
-        // Adds the main Activity to the task stack as the parent
-        stackBuilder.addParentStack(MainActivity.class);
+        Intent notificationIntent = new Intent();
+        notificationIntent.putExtra(MainActivity.KEY_TASK_ID, id);
 
-        // Push the content Intent onto the stack
-        stackBuilder.addNextIntent(notificationIntent);
+        Intent snoozeClickIntent = new Intent();
+        Intent confirmationClickIntent = new Intent();
 
-        // Get a PendingIntent containing the entire back stack
-        PendingIntent notificationPendingIntent = stackBuilder.getPendingIntent(0,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pNotificationClickIntent = PendingIntent.getActivity(getApplicationContext(),
+                0, notificationIntent, 0);
+        PendingIntent pSnoozeClickIntent = PendingIntent.getActivity(getApplicationContext(), 0,
+                snoozeClickIntent, 0);
+        PendingIntent pConfirmationClickIntent = PendingIntent.getActivity(getApplicationContext(),
+                0, confirmationClickIntent, 0);
 
-        // Get a notification builder that's compatible with platform versions
-        // >= 4
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        Notification notif = new Notification.Builder(getApplicationContext())
+                .setTicker("Don't forget to feed the squirrels!").setContentTitle("Content Title")
+                .setContentText("Details about the event").setSmallIcon(R.drawable.ic_launcher)
+                .setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND)
+                .addAction(R.drawable.ic_action_content_remove, "Snooze", pSnoozeClickIntent)
+                .addAction(R.drawable.ic_drawer_completed, "Got It!", pConfirmationClickIntent)
+                .setContentIntent(pNotificationClickIntent).build();
 
-        // Set the notification contents
-        builder.setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(
-                        getString(R.string.geofence_transition_notification_title, transitionType,
-                                ids))
-                .setContentText(getString(R.string.geofence_transition_notification_text))
-                .setContentIntent(notificationPendingIntent);
+        notif.flags = Notification.FLAG_AUTO_CANCEL;
 
-        // Get an instance of the Notification manager
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notifManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Issue the notification
-        mNotificationManager.notify(0, builder.build());
+        notifManager.notify(0, notif);
     }
 
     /**
