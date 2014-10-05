@@ -166,6 +166,7 @@ public class GeofenceSelectorActivity extends FragmentActivity implements OnMapC
                 values.put(Locus.Task.COLUMN_LATITUDE, loc.latitude);
                 values.put(Locus.Task.COLUMN_LONGITUDE, loc.longitude);
                 values.put(Locus.Task.COLUMN_RADIUS, geofenceCircle.getRadius());
+                values.put(Locus.Task.COLUMN_DUE, System.currentTimeMillis());
                 Uri uri = getContentResolver().insert(Locus.Task.CONTENT_URI, values);
 
                 Intent intent = new Intent(GeofenceSelectorActivity.this, TaskEditActivity.class);
@@ -184,6 +185,7 @@ public class GeofenceSelectorActivity extends FragmentActivity implements OnMapC
                 values.put(Locus.Task.COLUMN_LATITUDE, loc.latitude);
                 values.put(Locus.Task.COLUMN_LONGITUDE, loc.longitude);
                 values.put(Locus.Task.COLUMN_RADIUS, geofenceCircle.getRadius());
+                values.put(Locus.Task.COLUMN_DUE, System.currentTimeMillis());
                 getContentResolver().insert(Locus.Task.CONTENT_URI, values);
                 NavUtils.navigateUpFromSameTask(GeofenceSelectorActivity.this);
                 dialog.dismiss();

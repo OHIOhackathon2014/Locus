@@ -78,33 +78,6 @@
                 android:src="@drawable/ic_action_content_remove" />
         </LinearLayout>
 
-        <TextView
-            style="?android:attr/listSeparatorTextViewStyle"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:gravity="bottom"
-            android:paddingBottom="4dp"
-            android:paddingTop="4dp"
-            android:text="Location" />
-
-        <TextView
-            android:id="@+id/addressTextView"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:fontFamily="sans-serif"
-            android:paddingBottom="4dp"
-            android:paddingTop="4dp"
-            android:text="Atlantis"
-            android:textSize="18sp" />
-
-        <ImageView
-            android:id="@+id/mapImage"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/imageview_height"
-            android:paddingBottom="4dp"
-            android:paddingTop="4dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/placeholder" />
     </LinearLayout>
 
 </ScrollView>
