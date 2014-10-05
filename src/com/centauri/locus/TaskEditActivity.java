@@ -7,6 +7,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -19,7 +20,8 @@ import com.centauri.locus.provider.Locus;
  *
  */
 public class TaskEditActivity extends Activity {
-    private static final String TAG = TaskEditActivity.class.getSimpleName();
+    public static final String ACTION_SNOOZE = "com.centauri.locus.action.SNOOZE";
+    public static final String ACTION_CONFIRM = "com.centauri.locus.action.CONFIRM";
 
     /**
      * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -27,6 +29,26 @@ public class TaskEditActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getIntent().getAction() != null) {
+
+            long id = getIntent().getLongExtra(MainActivity.KEY_TASK_ID, 0);
+            Uri taskUri = ContentUris.withAppendedId(Locus.Task.CONTENT_URI, id);
+            ContentValues contentValues = new ContentValues();
+
+            if (getIntent().getAction().equals(ACTION_CONFIRM)) {
+                contentValues.put(Locus.Task.COLUMN_COMPLETED, 1);
+            } else if (getIntent().getAction().equals(ACTION_SNOOZE)) {
+                Cursor cursor = getContentResolver().query(taskUri,
+                        new String[] { Locus.Task._ID, Locus.Task.COLUMN_DUE }, null, null, null);
+                cursor.moveToFirst();
+                long due = cursor.getLong(cursor.getColumnIndexOrThrow(Locus.Task.COLUMN_DUE));
+                contentValues.put(Locus.Task.COLUMN_DUE, due + 3600000);
+            }
+
+            getContentResolver().update(taskUri, contentValues, null, null);
+        }
+
         if (savedInstanceState == null) {
             Bundle bundle = getIntent().getExtras();
             if (bundle == null) {

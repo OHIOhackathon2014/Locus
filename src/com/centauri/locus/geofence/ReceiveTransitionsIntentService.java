@@ -4,14 +4,19 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.centauri.locus.MainActivity;
 import com.centauri.locus.R;
+import com.centauri.locus.TaskEditActivity;
+import com.centauri.locus.provider.Locus;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
 
@@ -23,6 +28,9 @@ import java.util.List;
  * triggered the event.
  */
 public class ReceiveTransitionsIntentService extends IntentService {
+
+    private static final String[] PROJECTION = { Locus.Task._ID, Locus.Task.COLUMN_TITLE,
+        Locus.Task.COLUMN_DESCRIPTION, };
 
     /**
      * Sets an identifier for this class' background thread
@@ -159,27 +167,39 @@ public class ReceiveTransitionsIntentService extends IntentService {
 
         String[] stringIds = ids.split(",");
         long id = Long.parseLong(stringIds[0]);
+        Uri taskUri = ContentUris.withAppendedId(Locus.Task.CONTENT_URI, id);
+        Cursor cursor = getApplicationContext().getContentResolver().query(taskUri, PROJECTION,
+                null, null, null);
+        cursor.moveToFirst();
+        String title = cursor.getString(cursor.getColumnIndexOrThrow(Locus.Task.COLUMN_TITLE));
+        String desc = cursor.getString(cursor.getColumnIndexOrThrow(Locus.Task.COLUMN_DESCRIPTION));
+        cursor.close();
 
-        Intent notificationIntent = new Intent();
+        Intent notificationIntent = new Intent(getApplicationContext(), TaskEditActivity.class);
         notificationIntent.putExtra(MainActivity.KEY_TASK_ID, id);
 
-        Intent snoozeClickIntent = new Intent();
-        Intent confirmationClickIntent = new Intent();
+        Intent snoozeIntent = new Intent(getApplicationContext(), TaskEditActivity.class);
+        snoozeIntent.putExtra(MainActivity.KEY_TASK_ID, id);
+        snoozeIntent.setAction(TaskEditActivity.ACTION_SNOOZE);
 
-        PendingIntent pNotificationClickIntent = PendingIntent.getActivity(getApplicationContext(),
-                0, notificationIntent, 0);
-        PendingIntent pSnoozeClickIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-                snoozeClickIntent, 0);
-        PendingIntent pConfirmationClickIntent = PendingIntent.getActivity(getApplicationContext(),
-                0, confirmationClickIntent, 0);
+        Intent confirmIntent = new Intent(getApplicationContext(), TaskEditActivity.class);
+        confirmIntent.putExtra(MainActivity.KEY_TASK_ID, id);
+        confirmIntent.setAction(TaskEditActivity.ACTION_CONFIRM);
+
+        PendingIntent notificationPIntent = PendingIntent.getActivity(getApplicationContext(), 0,
+                notificationIntent, 0);
+        PendingIntent snoozePIntent = PendingIntent.getActivity(getApplicationContext(), 0,
+                snoozeIntent, 0);
+        PendingIntent confirmationPIntent = PendingIntent.getActivity(getApplicationContext(), 0,
+                confirmIntent, 0);
 
         Notification notif = new Notification.Builder(getApplicationContext())
-                .setTicker("Don't forget to feed the squirrels!").setContentTitle("Content Title")
-                .setContentText("Details about the event").setSmallIcon(R.drawable.ic_launcher)
+                .setTicker("Don't forget: " + title).setContentTitle(title).setContentText(desc)
+                .setSmallIcon(R.drawable.ic_launcher)
                 .setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND)
-                .addAction(R.drawable.ic_action_content_remove, "Snooze", pSnoozeClickIntent)
-                .addAction(R.drawable.ic_drawer_completed, "Got It!", pConfirmationClickIntent)
-                .setContentIntent(pNotificationClickIntent).build();
+                .addAction(R.drawable.ic_action_volume_muted, "Snooze", snoozePIntent)
+                .addAction(R.drawable.ic_action_accept, "Got It!", confirmationPIntent)
+                .setContentIntent(notificationPIntent).build();
 
         notif.flags = Notification.FLAG_AUTO_CANCEL;
 
