@@ -15,7 +15,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.centauri.locus.provider.Locus;
 import com.google.android.gms.common.ConnectionResult;
@@ -145,10 +148,11 @@ public class GeofenceSelectorActivity extends FragmentActivity implements OnMapC
 
     private void newTaskDialog() {
         final LatLng loc = markerLoc;
+        LayoutInflater inflater = getLayoutInflater();
+        final View viewLayout = inflater.inflate(R.layout.new_task_dialog, null);
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        final EditText editText = new EditText(this);
-        editText.setPadding(8, 8, 8, 8);
-        dialogBuilder.setView(editText);
+        dialogBuilder.setView(viewLayout);
+        dialogBuilder.setTitle("Task Title");
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 
             @Override
@@ -160,8 +164,10 @@ public class GeofenceSelectorActivity extends FragmentActivity implements OnMapC
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                LinearLayout linearLayout = (LinearLayout) viewLayout;
                 ContentValues values = new ContentValues();
-                values.put(Locus.Task.COLUMN_TITLE, editText.getText().toString());
+                values.put(Locus.Task.COLUMN_TITLE, ((EditText) linearLayout
+                        .findViewById(R.id.newTaskEditText)).getText().toString());
                 values.put(Locus.Task.COLUMN_DESCRIPTION, "");
                 values.put(Locus.Task.COLUMN_LATITUDE, loc.latitude);
                 values.put(Locus.Task.COLUMN_LONGITUDE, loc.longitude);
@@ -179,8 +185,10 @@ public class GeofenceSelectorActivity extends FragmentActivity implements OnMapC
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                LinearLayout linearLayout = (LinearLayout) viewLayout;
                 ContentValues values = new ContentValues();
-                values.put(Locus.Task.COLUMN_TITLE, editText.getText().toString());
+                values.put(Locus.Task.COLUMN_TITLE, ((EditText) linearLayout
+                        .findViewById(R.id.newTaskEditText)).getText().toString());
                 values.put(Locus.Task.COLUMN_DESCRIPTION, "");
                 values.put(Locus.Task.COLUMN_LATITUDE, loc.latitude);
                 values.put(Locus.Task.COLUMN_LONGITUDE, loc.longitude);
