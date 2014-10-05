@@ -10,6 +10,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -61,7 +64,35 @@ public class TaskEditFragment extends Fragment implements OnClickListener, OnDat
             taskCursor = getActivity().getContentResolver().query(taskUri, PROJECTION, null, null,
                     null);
         }
+        setHasOptionsMenu(true);
 
+    }
+
+    /**
+     * @see android.app.Fragment#onCreateOptionsMenu(android.view.Menu,
+     *      android.view.MenuInflater)
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_edit_task, menu);
+    }
+
+    /**
+     * @see android.app.Fragment#onOptionsItemSelected(android.view.MenuItem)
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.menu_save:
+            saveData();
+            getActivity().finish();
+            break;
+
+        default:
+            break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
