@@ -50,6 +50,10 @@ public class LocusDatabaseHelper extends SQLiteOpenHelper {
                 + "40.7127, -74.0059, 50, 86400000);");
         db.execSQL("INSERT INTO task (title, latitude, longitude, radius, due) VALUES('Do some task that is hopefully much longer than the space provided for the title', "
                 + "40.0000, -83.0145, 100, 86400000);");
+        db.execSQL("INSERT INTO task (title, description, latitude, longitude, radius, due, completed) VALUES('Do some task', 'Finished this task!', "
+                + "40.7127, -74.0059, 50, 86400000, 1);");
+        db.execSQL("INSERT INTO task (title, latitude, longitude, radius, due, completed) VALUES('Another finished task', "
+                + "40.0000, -83.0145, 100, 86400000, 1);");
 
         db.execSQL("INSERT INTO place (title, latitude, longitude) VALUES('New York City',"
                 + "40.7127, -74.0059);");

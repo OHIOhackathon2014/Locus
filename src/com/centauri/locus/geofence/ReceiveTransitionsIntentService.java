@@ -178,27 +178,13 @@ public class ReceiveTransitionsIntentService extends IntentService {
         Intent notificationIntent = new Intent(getApplicationContext(), TaskEditActivity.class);
         notificationIntent.putExtra(MainActivity.KEY_TASK_ID, id);
 
-        Intent snoozeIntent = new Intent(getApplicationContext(), TaskEditActivity.class);
-        snoozeIntent.putExtra(MainActivity.KEY_TASK_ID, id);
-        snoozeIntent.setAction(TaskEditActivity.ACTION_SNOOZE);
-
-        Intent confirmIntent = new Intent(getApplicationContext(), TaskEditActivity.class);
-        confirmIntent.putExtra(MainActivity.KEY_TASK_ID, id);
-        confirmIntent.setAction(TaskEditActivity.ACTION_CONFIRM);
-
         PendingIntent notificationPIntent = PendingIntent.getActivity(getApplicationContext(), 0,
                 notificationIntent, 0);
-        PendingIntent snoozePIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-                snoozeIntent, 0);
-        PendingIntent confirmationPIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-                confirmIntent, 0);
 
         Notification notif = new Notification.Builder(getApplicationContext())
                 .setTicker("Don't forget: " + title).setContentTitle(title).setContentText(desc)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND)
-                .addAction(R.drawable.ic_action_volume_muted, "Snooze", snoozePIntent)
-                .addAction(R.drawable.ic_action_accept, "Got It!", confirmationPIntent)
                 .setContentIntent(notificationPIntent).build();
 
         notif.flags = Notification.FLAG_AUTO_CANCEL;

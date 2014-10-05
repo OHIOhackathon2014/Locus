@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,7 +35,8 @@ public class TaskListFragment extends ListFragment implements MultiChoiceModeLis
         OnItemLongClickListener {
 
     private static final String[] PROJECTION = { Locus.Task._ID, Locus.Task.COLUMN_TITLE,
-        Locus.Task.COLUMN_DESCRIPTION, Locus.Task.COLUMN_LATITUDE, Locus.Task.COLUMN_LONGITUDE, };
+        Locus.Task.COLUMN_DESCRIPTION, Locus.Task.COLUMN_LATITUDE, Locus.Task.COLUMN_LONGITUDE,
+        Locus.Task.COLUMN_COMPLETED };
 
     public interface OnListItemClickedCallback {
         public void onListItemClicked(ListView listView, View view, int position, long id);
@@ -52,8 +54,16 @@ public class TaskListFragment extends ListFragment implements MultiChoiceModeLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Cursor cursor = getActivity().getContentResolver().query(Locus.Task.CONTENT_URI,
-                PROJECTION, null, null, null);
+        Cursor cursor = null;
+        if (getArguments() != null && getArguments().getInt(MainActivity.KEY_TASK_ID) == 0) {
+            Log.i("------------------", "Completed tasks");
+            cursor = getActivity().getContentResolver().query(Locus.Task.CONTENT_URI, PROJECTION,
+                    "completed = 1", null, null);
+        } else {
+            Log.i("------------------", "Not Completed tasks");
+            cursor = getActivity().getContentResolver().query(Locus.Task.CONTENT_URI, PROJECTION,
+                    "completed = 0", null, null);
+        }
         adapter = new TaskAdapter(getActivity(), cursor, 0);
         setListAdapter(adapter);
         setHasOptionsMenu(true);

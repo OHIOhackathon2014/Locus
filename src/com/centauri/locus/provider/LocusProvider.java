@@ -17,6 +17,8 @@ import android.text.TextUtils;
 import com.centauri.locus.provider.Locus.Place;
 import com.centauri.locus.provider.Locus.Task;
 
+import java.util.HashMap;
+
 /**
  * @author mohitd2000
  * 
@@ -33,11 +35,23 @@ public class LocusProvider extends ContentProvider {
 
     private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
+    private static final HashMap<String, String> tasksProjectionMap;
+
     static {
         uriMatcher.addURI(Locus.AUTHORITY, "tasks", TASKS);
         uriMatcher.addURI(Locus.AUTHORITY, "tasks/*", TASK_ID);
         uriMatcher.addURI(Locus.AUTHORITY, "places", PLACES);
         uriMatcher.addURI(Locus.AUTHORITY, "places/*", PLACE_ID);
+
+        tasksProjectionMap = new HashMap<String, String>();
+        tasksProjectionMap.put(Locus.Task._ID, Locus.Task._ID);
+        tasksProjectionMap.put(Locus.Task.COLUMN_TITLE, Locus.Task.COLUMN_TITLE);
+        tasksProjectionMap.put(Locus.Task.COLUMN_DESCRIPTION, Locus.Task.COLUMN_DESCRIPTION);
+        tasksProjectionMap.put(Locus.Task.COLUMN_LATITUDE, Locus.Task.COLUMN_LATITUDE);
+        tasksProjectionMap.put(Locus.Task.COLUMN_LONGITUDE, Locus.Task.COLUMN_LONGITUDE);
+        tasksProjectionMap.put(Locus.Task.COLUMN_RADIUS, Locus.Task.COLUMN_RADIUS);
+        tasksProjectionMap.put(Locus.Task.COLUMN_DUE, Locus.Task.COLUMN_DUE);
+        tasksProjectionMap.put(Locus.Task.COLUMN_COMPLETED, Locus.Task.COLUMN_COMPLETED);
     }
 
     /**
@@ -63,6 +77,7 @@ public class LocusProvider extends ContentProvider {
         switch (match) {
         case TASKS:
             builder.setTables(Task.TABLE_NAME);
+            builder.setProjectionMap(tasksProjectionMap);
             break;
 
         case TASK_ID:

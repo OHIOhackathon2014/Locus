@@ -100,8 +100,8 @@ public class NavigationDrawerFragment extends Fragment {
         });
         drawerListView.setAdapter(new ArrayAdapter<String>(getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_activated_1, android.R.id.text1, new String[] {
-                    getString(R.string.title_ongoing), getString(R.string.title_completed),
-                    getString(R.string.title_map), getString(R.string.title_places), }));
+                    getString(R.string.title_ongoing), getString(R.string.title_map),
+                    getString(R.string.title_places), }));
         drawerListView.setItemChecked(currentSelectedPosition, true);
         return drawerListView;
     }

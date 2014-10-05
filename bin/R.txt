@@ -205,6 +205,7 @@ int id line 0x7f090034
 int id location_imageview 0x7f090025
 int id map 0x7f090014
 int id match_parent 0x7f09000c
+int id menu_check 0x7f09003b
 int id menu_delete 0x7f090038
 int id menu_save 0x7f09003a
 int id minutes 0x7f09002e

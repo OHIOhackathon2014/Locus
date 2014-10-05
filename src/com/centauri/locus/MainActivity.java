@@ -86,13 +86,10 @@ public class MainActivity extends Activity implements
                     .commit();
             break;
         case 1:
-            startActivity(new Intent(this, GeofenceSelectorActivity.class));
-            break;
-        case 2:
             fragmentManager.beginTransaction().replace(R.id.container, new TaskMapFragment())
                     .commit();
             break;
-        case 3:
+        case 2:
             fragmentManager.beginTransaction().replace(R.id.container, new PlaceListFragment())
                     .commit();
             break;
