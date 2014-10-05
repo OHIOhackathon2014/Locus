@@ -47,6 +47,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.centauri.locus.MainActivity" />
         </activity>
+        
+        <activity android:name="com.centauri.locus.SettingsActivity"></activity>
 
         <provider
             android:name=".provider.LocusProvider"
